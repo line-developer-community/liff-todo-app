@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block body %}
+<h2>ログインしています</h2>
+<script>
+    window.onload = function () {
+        initLiff('{{ liffId }}');
+        // window.location.href = '/lists?id_token=deadbeafdeadbeafdeadbeaf';
+    }
+    function initLiff(myLiffId) {
+        
+        liff
+            .init({
+                liffId: myLiffId,
+            })
+            .then(() => { 
+                if (!liff.isInClient() && !liff.isLoggedIn()){
+                    window.alert("LINEアカウントにログインします。");
+                    liff.login();
+                } else {
+                    // IDトークンを取得してTODOリスト画面にパラメータを渡す
+                    idToken = liff.getIDToken();
+                    window.location.href = '/lists?id_token=' + idToken;
+                }
+            })
+            .catch(function (error) {
+                window.alert("Error getting profile: " + error);
+            });
+    }
+</script>
+{% endblock %}

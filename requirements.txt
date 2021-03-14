@@ -1,0 +1,7 @@
+Flask
+Flask-cors
+Flask-SQLAlchemy
+psycopg2
+line-bot-sdk
+requests
+python-dotenv

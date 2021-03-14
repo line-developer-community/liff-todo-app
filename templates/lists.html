@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block body %}
+{% if todo_lists %}
+    <h1>{{ user_name }} さんのTODOリスト</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>やること</th>
+                <th>更新日時</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for param in todo_lists %}
+            <tr>
+                <th>{{ param['todo_detail'] }}</th>
+                <th>{{ param['updated_at'] }}</th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h1>TODOリストがありません</h1>
+{% endif %}
+
+<button id="insert" type="button" class="btn btn-primary w-100 mt-2">
+    データ登録
+</button>
+<script>
+    $('#insert').on("click", function() {
+        var params = {
+            "user_id": "deadbeafdeadbeafdeadbeaf",
+            "is_progress": true,
+            "todo_detail": "test"
+        }
+        axios
+            .post("/insert_todo", params)
+            .then(function(response) {
+                console.log(response);
+                alert('done');
+            })
+            .catch(function (error) {
+                alert("Error: " + error);
+            });
+    });
+</script>
+
+{% endblock %}
