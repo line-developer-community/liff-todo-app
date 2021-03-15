@@ -72,16 +72,16 @@ def login():
 
 @app.route('/lists')
 def lists():
-    todo_lists = []
-    user_name = ''
     # IDトークンをパラメータから取得
     id_token = request.args.get('id_token', None)
+    todo_lists = []
+    user_name = ''
     if id_token:
-        # LIFFのユーザーデータを取得
         data = {
             'id_token': id_token,
             'client_id': LIFF_CHANNEL_ID
         }
+        # LIFFのユーザーデータを取得
         verifyed_data = requests.post(
             'https://api.line.me/oauth2/v2.1/verify', data=data)
         if verifyed_data.status_code == 200:
@@ -89,34 +89,41 @@ def lists():
             user_id = user_info['sub']
             user_name = user_info['name']
             print(user_info)
-            # TODOデータの中から該当ユーザーの未完了タスクを取得
+            # user_todoの中から該当ユーザーの未完了タスクを取得
             todo_data = db.session.query(user_todo).\
                 filter(user_todo.user_id == user_id,
                        user_todo.is_progress.is_(True))
             for data in todo_data:
                 param = {
+                    'id': data.id,
                     'todo_detail': data.todo_detail,
                     'updated_at': data.updated_at.strftime('%Y–%m–%d %H:%M:%S'),
                 }
                 todo_lists.append(param)
-    return render_template('lists.html', user_name=user_name, todo_lists=todo_lists)
+    return render_template(
+        'lists.html',
+        id_token=id_token,
+        user_name=user_name,
+        todo_lists=todo_lists)
 
 
-@app.route('/insert_todo', methods=['POST'])
-def insert_todo():
+@app.route('/update', methods=['POST'])
+def update():
     body = request.get_json()
-    app.logger.info('Request body: ' + json.dumps(body))
+    done_ids = [int(n) for n in body['ids']]
 
-    # DBに登録
-    todoDB = user_todo(body)
-    db.session.add(todoDB)
+    # 更新するデータを取得
+    todo_data = db.session.query(user_todo).\
+        filter(user_todo.id.in_(done_ids))
+
+    # ステータスを完了に変更する
+    for data in todo_data:
+        print('id: {} is done.'.format(data.id))
+        data.is_progress = False
+
+    # 変更をデータベースに適用
     db.session.commit()
-
-    response = {
-        "message": "OK",
-        "status": 200
-    }
-    return jsonify(response)
+    return jsonify({'status': 200})
 
 
 @app.route('/callback', methods=['POST'])

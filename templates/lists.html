@@ -4,6 +4,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>完了</th>
                 <th>やること</th>
                 <th>更新日時</th>
             </tr>
@@ -11,36 +12,74 @@
         <tbody>
             {% for param in todo_lists %}
             <tr>
+                <th>
+                    <input type="checkbox" value="{{ param['id'] }}">
+                </th>
                 <th>{{ param['todo_detail'] }}</th>
                 <th>{{ param['updated_at'] }}</th>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <button id="done" class='btn btn-primary'>選択したリストを完了済みにする</button>
 {% else %}
     <h1>TODOリストがありません</h1>
 {% endif %}
 
-<button id="insert" type="button" class="btn btn-primary w-100 mt-2">
-    データ登録
-</button>
 <script>
-    $('#insert').on("click", function() {
+    // 画面を開いたときにはボタンは非表示にする
+    window.onload = function(){
+        undisplayButton();    
+    }
+
+    $('#done').on("click", function() {
+        // チェックボックスで選択した値を取得
+        var checkedIds = $('input:checked').map(function(){
+            $(this).prop('disabled', true);
+            return $(this).val();
+        }).get();
+        var idToken = '{{ id_token }}';
+
+        // リクエストパラメータを設定
         var params = {
-            "user_id": "deadbeafdeadbeafdeadbeaf",
-            "is_progress": true,
-            "todo_detail": "test"
+            "ids": checkedIds,
         }
+        console.log(checkedIds);
+
+        // タスクを完了させるためにPOST
         axios
-            .post("/insert_todo", params)
+            .post("/update", params)
             .then(function(response) {
-                console.log(response);
                 alert('done');
+                console.log(response);
+                window.location.href = '/lists?id_token=' + idToken;
             })
             .catch(function (error) {
                 alert("Error: " + error);
             });
     });
+
+    $('input').change(function() {
+        var checkedIds = $('input:checked').map(function(){
+            return $(this).val();
+        }).get();
+
+        if (checkedIds.length === 0) {
+            undisplayButton();
+        } else {
+            displayButton();
+        }
+    });
+
+    function displayButton(){
+        var doneButton = document.getElementById("done");
+        doneButton.style.display = "block";
+    }
+
+    function undisplayButton() {
+        var doneButton = document.getElementById("done");
+        doneButton.style.display = "none";
+    }
 </script>
 
 {% endblock %}
