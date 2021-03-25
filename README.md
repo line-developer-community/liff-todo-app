@@ -5,14 +5,20 @@
 - dockerのインストール
 - docker-composeコマンドが使えること
 
-## 起動方法
-このレポジトリをクローン
+## 手順
+- このレポジトリをクローン
 
 ```
 git clone https://github.com/line-developer-community/liff-todo-app
 ```
 
-アプリの立ち上げ方
+- .envファイルの用意
+
+```
+cp .env_sample .env
+```
+
+- アプリを立ち上げる
 
 ```
 docker-compose up -d
