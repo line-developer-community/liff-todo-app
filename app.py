@@ -9,7 +9,6 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    FollowEvent,
     MessageEvent,
     TextMessage,
     TextSendMessage,
@@ -132,11 +131,6 @@ def callback():
     # リクエストボディを取得
     body = request.get_data(as_text=True)
     print("Request body: " + body)
-
-    # 接続チェック
-    data = json.loads(body)
-    if not data["events"]:
-        return "OK"
 
     # Webhookハンドラーを登録
     try:
