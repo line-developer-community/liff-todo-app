@@ -6,7 +6,7 @@
             <tr>
                 <th>完了</th>
                 <th>やること</th>
-                <th>更新日時</th>
+                <th>作成日時</th>
             </tr>
         </thead>
         <tbody>
@@ -16,7 +16,7 @@
                     <input type="checkbox" value="{{ param['id'] }}">
                 </th>
                 <th>{{ param['todo_detail'] }}</th>
-                <th>{{ param['updated_at'] }}</th>
+                <th>{{ param['created_at'] }}</th>
             </tr>
             {% endfor %}
         </tbody>

@@ -43,13 +43,9 @@ class user_todo(db.Model):
     __tablename__ = 'user_todo'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(255))
-    is_progress = db.Column(db.Boolean, default=True)
+    is_progress = db.Column(db.Boolean, server_default='t')
     todo_detail = db.Column(db.String(255))
     created_at = db.Column(
-        db.DateTime,
-        default=datetime.now()
-    )
-    updated_at = db.Column(
         db.DateTime,
         server_default=db.text('CURRENT_TIMESTAMP')
     )
@@ -96,7 +92,7 @@ def lists():
                 param = {
                     'id': data.id,
                     'todo_detail': data.todo_detail,
-                    'updated_at': data.updated_at.strftime('%Y–%m–%d %H:%M:%S'),
+                    'created_at': data.created_at.strftime('%Y–%m–%d %H:%M:%S'),
                 }
                 todo_lists.append(param)
     return render_template(
