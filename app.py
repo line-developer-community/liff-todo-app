@@ -42,7 +42,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 class user_todo(db.Model):
     __tablename__ = 'user_todo'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(255))
+    user_id = db.Column(db.String(255), nullable=False)
     is_progress = db.Column(db.Boolean, server_default='t')
     todo_detail = db.Column(db.String(255))
     created_at = db.Column(
